@@ -219,7 +219,7 @@
             return [[headers[0], ...selectedIdx.map(i => headers[i])], ...rows];
         }
 
-        function renderSection(data, barId, trendId, tableId, color) {
+       function renderSection(data, barId, trendId, tableId, color) {
             if (charts[barId]) charts[barId].destroy();
             if (charts[trendId]) charts[trendId].destroy();
 
@@ -227,6 +227,14 @@
             const contentNoTotal = data.slice(1).filter(r => !r[0].toString().toUpperCase().includes('TOTAL'));
             const cats = contentNoTotal.map(r => r[0]);
 
+            // Общие настройки шрифта для осей
+            const axisFontSettings = {
+                family: "'Inter', sans-serif",
+                size: 12,
+                weight: '600'
+            };
+
+            // Bar Chart
             charts[barId] = new Chart(document.getElementById(barId), {
                 type: 'bar',
                 data: {
@@ -238,8 +246,66 @@
                         borderRadius: 4
                     }))
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } } } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { color: '#ffffff', font: axisFontSettings } 
+                        } 
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: '#334155' },
+                            ticks: { color: '#ffffff', font: axisFontSettings } // Чисто белый текст для оси Y
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#ffffff', font: axisFontSettings } // Чисто белый текст для оси X
+                        }
+                    }
+                }
             });
+
+            // Trend Chart
+            const totalRow = data.find(r => r[0].toString().toUpperCase().includes('TOTAL')) || data[data.length - 1];
+            charts[trendId] = new Chart(document.getElementById(trendId), {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Total Sum',
+                        data: totalRow.slice(1).map(v => parseFloat(v.toString().replace(',','.')) || 0),
+                        borderColor: color,
+                        backgroundColor: color + '22',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: {
+                        legend: { labels: { color: '#ffffff', font: axisFontSettings } }
+                    },
+                    scales: { 
+                        y: { 
+                            grid: { color: '#334155' },
+                            ticks: { color: '#ffffff', font: axisFontSettings } // Чисто белый текст для оси Y
+                        },
+                        x: {
+                            ticks: { color: '#ffffff', font: axisFontSettings } // Чисто белый текст для оси X
+                        }
+                    } 
+                }
+            });
+
+            let html = '<table class="data-table"><thead><tr>' + data[0].map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>';
+            html += data.slice(1).map(row => '<tr>' + row.map(c => `<td>${c}</td>`).join('') + '</tr>').join('') + '</tbody></table>';
+            document.getElementById(tableId).innerHTML = html;
+        }
 
             const totalRow = data.find(r => r[0].toString().toUpperCase().includes('TOTAL')) || data[data.length - 1];
             charts[trendId] = new Chart(document.getElementById(trendId), {
@@ -267,6 +333,7 @@
     <script src="https://accounts.google.com/gsi/client" onload="initClient()" async defer></script>
 </body>
 </html>
+
 
 
 
