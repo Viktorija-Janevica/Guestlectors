@@ -65,44 +65,55 @@
                 </button>
             </div>
 
+            <div class="card md:col-span-2 space-y-4 bg-[#1e293b]/50 border-indigo-500/30">
+                <div class="flex flex-wrap gap-6 items-end">
+                    <div class="flex-1 min-w-[200px]">
+                        <label class="block text-[10px] uppercase tracking-wider text-slate-500 mb-2 font-bold font-bold">Search Category</label>
+                        <input type="text" id="search-global" oninput="applyFilters()" placeholder="Напр: NAV" class="w-full bg-slate-800 border border-slate-600 text-sm rounded-lg p-2 outline-none text-white focus:border-indigo-500">
+                    </div>
+                    <div class="w-48">
+                        <label class="block text-[10px] uppercase tracking-wider text-slate-500 mb-2 font-bold font-bold">Time Period</label>
+                        <select id="filter-period" onchange="applyFilters()" class="w-full bg-slate-800 border border-slate-600 text-sm rounded-lg p-2 outline-none text-white focus:border-indigo-500 cursor-pointer">
+                            <option value="last12" selected>Last 12 Months</option>
+                            <option value="all">All Data</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <section id="section-expenses" class="space-y-6">
-                <div class="card md:col-span-2 space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold text-indigo-400">Expenses</h2>
-                        <span id="expenses-range-info" class="text-xs text-slate-500 font-mono"></span>
-                    </div>
-                    <div class="flex flex-wrap gap-6 items-end border-t border-slate-700 pt-4">
-                        <div class="flex-1 min-w-[200px]">
-                            <label class="block text-[10px] uppercase tracking-wider text-slate-500 mb-2 font-bold">Search Category</label>
-                            <input type="text" id="search-expenses" oninput="applyFilters()" placeholder="Напр: NAV" class="w-full bg-slate-800 border border-slate-600 text-sm rounded-lg p-2 outline-none text-white focus:border-indigo-500">
-                        </div>
-                        <div class="w-48">
-                            <label class="block text-[10px] uppercase tracking-wider text-slate-500 mb-2 font-bold">Time Period</label>
-                            <select id="filter-period" onchange="applyFilters()" class="w-full bg-slate-800 border border-slate-600 text-sm rounded-lg p-2 outline-none text-white focus:border-indigo-500">
-                                <option value="all">All Available</option>
-                                <option value="2025">2025</option>
-                                <option value="2026">2026</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="card md:col-span-2 border-l-4 border-indigo-500">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                        <span class="p-2 bg-indigo-500/20 rounded-lg text-indigo-400">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        </span>
+                        Expenses
+                    </h2>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="card md:col-span-2"><div class="chart-container"><canvas id="chartExpensesMain"></canvas></div></div>
-                    <div class="card"><h3 class="text-indigo-400 font-bold mb-4 text-sm uppercase">Expenses Trend</h3><div class="chart-container"><canvas id="chartExpensesTrend"></canvas></div></div>
-                    <div class="card"><h3 class="text-indigo-400 font-bold mb-4 text-sm uppercase">Expenses Data</h3><div id="table-expenses-container" class="table-wrapper"></div></div>
+                    <div class="card"><h3 class="text-indigo-400 font-bold mb-4 text-xs uppercase tracking-widest">Expenses Trend</h3><div class="chart-container"><canvas id="chartExpensesTrend"></canvas></div></div>
+                    <div class="card"><h3 class="text-indigo-400 font-bold mb-4 text-xs uppercase tracking-widest">Data Table</h3><div id="table-expenses-container" class="table-wrapper"></div></div>
                 </div>
             </section>
 
             <section id="section-payout" class="space-y-6 pb-12">
-                <div class="card md:col-span-2">
-                    <h2 class="text-2xl font-bold text-emerald-400">Payout</h2>
+                <div class="card md:col-span-2 border-l-4 border-emerald-500">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                        <span class="p-2 bg-emerald-500/20 rounded-lg text-emerald-400">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 15 2 2 4-4"/><rect width="20" height="14" x="2" y="6" rx="2"/><path d="M12 10h.01"/></svg>
+                        </span>
+                        Payout
+                    </h2>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="card md:col-span-2"><div class="chart-container"><canvas id="chartPayoutMain"></canvas></div></div>
-                    <div class="card"><h3 class="text-emerald-400 font-bold mb-4 text-sm uppercase">Payout Trend</h3><div class="chart-container"><canvas id="chartPayoutTrend"></canvas></div></div>
-                    <div class="card"><h3 class="text-emerald-400 font-bold mb-4 text-sm uppercase">Payout Data</h3><div id="table-payout-container" class="table-wrapper"></div></div>
+                    <div class="card"><h3 class="text-emerald-400 font-bold mb-4 text-xs uppercase tracking-widest">Payout Trend</h3><div class="chart-container"><canvas id="chartPayoutTrend"></canvas></div></div>
+                    <div class="card"><h3 class="text-emerald-400 font-bold mb-4 text-xs uppercase tracking-widest">Data Table</h3><div id="table-payout-container" class="table-wrapper"></div></div>
                 </div>
             </section>
 
@@ -115,10 +126,7 @@
         
         let tokenClient, accessToken = null;
         let activeTab = 'standard'; 
-        let rawData = { 
-            exp_std: [], exp_det: [], 
-            pay_std: [], pay_det: [] 
-        };
+        let rawData = { exp_std: [], exp_det: [], pay_std: [], pay_det: [] };
         let charts = {};
 
         function initClient() {
@@ -137,10 +145,10 @@
             
             try {
                 const [r1, r2, r3, r4] = await Promise.all([
-                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Лист2!A1:N9`, { headers: { 'Authorization': `Bearer ${accessToken}` } }), // Exp Standard
-                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Лист1!A1:N18`, { headers: { 'Authorization': `Bearer ${accessToken}` } }), // Exp Detailed
-                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Лист4!A1:N9`, { headers: { 'Authorization': `Bearer ${accessToken}` } }), // Pay Standard
-                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Лист3!A1:N18`, { headers: { 'Authorization': `Bearer ${accessToken}` } })  // Pay Detailed
+                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Лист2!A1:N9`, { headers: { 'Authorization': `Bearer ${accessToken}` } }),
+                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Лист1!A1:N18`, { headers: { 'Authorization': `Bearer ${accessToken}` } }),
+                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Лист4!A1:N9`, { headers: { 'Authorization': `Bearer ${accessToken}` } }),
+                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Лист3!A1:N18`, { headers: { 'Authorization': `Bearer ${accessToken}` } })
                 ]);
                 
                 rawData.exp_std = (await r1.json()).values || [];
@@ -156,25 +164,26 @@
             activeTab = tab;
             document.getElementById('tab-std-btn').className = `tab-btn ${tab === 'standard' ? 'active' : ''}`;
             document.getElementById('tab-det-btn').className = `tab-btn ${tab === 'detailed' ? 'active' : ''}`;
+            
+            // Устанавливаем фильтр по умолчанию
+            document.getElementById('filter-period').value = 'last12';
             applyFilters();
         }
 
         function applyFilters() {
-            const filterVal = document.getElementById('filter-period').value;
-            const searchVal = document.getElementById('search-expenses').value.toLowerCase();
+            const period = document.getElementById('filter-period').value;
+            const search = document.getElementById('search-global').value.toLowerCase();
 
-            // Обработка Expenses
             const expData = activeTab === 'standard' ? rawData.exp_std : rawData.exp_det;
-            const filteredExp = filterData(expData, filterVal, searchVal);
+            const filteredExp = processData(expData, period, search);
             renderSection(filteredExp, 'chartExpensesMain', 'chartExpensesTrend', 'table-expenses-container', '#6366f1');
 
-            // Обработка Payout
             const payData = activeTab === 'standard' ? rawData.pay_std : rawData.pay_det;
-            const filteredPay = filterData(payData, filterVal, searchVal);
+            const filteredPay = processData(payData, period, search);
             renderSection(filteredPay, 'chartPayoutMain', 'chartPayoutTrend', 'table-payout-container', '#10b981');
         }
 
-        function filterData(data, period, search) {
+        function processData(data, period, search) {
             if (!data || data.length === 0) return [];
             const headers = data[0];
             const content = data.slice(1);
@@ -184,7 +193,17 @@
                 if (i === 0) return;
                 const yearMatch = h.match(/\d{4}/);
                 const year = yearMatch ? yearMatch[0] : null;
-                if (period === "all" || period === year) selectedIdx.push(i);
+
+                if (period === "all") {
+                    selectedIdx.push(i);
+                } else if (period === "last12") {
+                    // Всегда берем последние 12 колонок данных (если они есть)
+                    const totalCols = headers.length - 1;
+                    const startIdx = Math.max(1, totalCols - 11);
+                    if (i >= startIdx) selectedIdx.push(i);
+                } else if (period === year) {
+                    selectedIdx.push(i);
+                }
             });
 
             const rows = content
@@ -202,7 +221,6 @@
             const contentNoTotal = data.slice(1).filter(r => !r[0].toString().toUpperCase().includes('TOTAL'));
             const cats = contentNoTotal.map(r => r[0]);
 
-            // Bar Chart
             charts[barId] = new Chart(document.getElementById(barId), {
                 type: 'bar',
                 data: {
@@ -210,32 +228,31 @@
                     datasets: months.map((m, i) => ({
                         label: m,
                         data: contentNoTotal.map(r => parseFloat(r[i+1].toString().replace(',','.')) || 0),
-                        backgroundColor: `hsla(${color === '#10b981' ? 160 : 230}, 60%, ${50 + i*5}%, 0.8)`,
+                        backgroundColor: `hsla(${color === '#10b981' ? 160 : 230}, 60%, ${45 + (i * 4)}%, 0.8)`,
                         borderRadius: 4
                     }))
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } } } }
             });
 
-            // Trend Chart
             const totalRow = data.find(r => r[0].toString().toUpperCase().includes('TOTAL')) || data[data.length - 1];
             charts[trendId] = new Chart(document.getElementById(trendId), {
                 type: 'line',
                 data: {
                     labels: months,
                     datasets: [{
-                        label: 'Total',
+                        label: 'Total Sum',
                         data: totalRow.slice(1).map(v => parseFloat(v.toString().replace(',','.')) || 0),
                         borderColor: color,
                         backgroundColor: color + '22',
                         fill: true,
-                        tension: 0.4
+                        tension: 0.4,
+                        borderWidth: 3
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: '#334155' } } } }
             });
 
-            // Table
             let html = '<table class="data-table"><thead><tr>' + data[0].map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>';
             html += data.slice(1).map(row => '<tr>' + row.map(c => `<td>${c}</td>`).join('') + '</tr>').join('') + '</tbody></table>';
             document.getElementById(tableId).innerHTML = html;
