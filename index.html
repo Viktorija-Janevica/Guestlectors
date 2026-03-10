@@ -11,7 +11,7 @@
     
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f1f5f9; margin: 0; }
-        #dashboard { display: none; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; padding: 24px; max-width: 1400px; margin: 0 auto; }
+        #dashboard-container { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
         .card { background: #1e293b; padding: 24px; border-radius: 16px; border: 1px solid #334155; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
         .chart-container { position: relative; height: 350px; width: 100%; }
         .table-wrapper { overflow-x: auto; margin-top: 1rem; border-radius: 8px; border: 1px solid #334155; max-height: 400px; }
@@ -19,10 +19,13 @@
         .data-table th { background: #334155; color: #818cf8; text-align: left; padding: 12px; font-weight: 600; position: sticky; top: 0; }
         .data-table td { padding: 10px; border-top: 1px solid #334155; }
         .data-table tr:hover { background: #262f3f; }
+        
+        /* Стили вкладок */
+        .tab-btn { padding: 12px 24px; font-weight: 600; color: #94a3b8; border-bottom: 3px solid transparent; transition: 0.3s; }
+        .tab-btn.active { color: #6366f1; border-bottom-color: #6366f1; background: rgba(99, 102, 241, 0.05); }
+        
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        select, input { transition: all 0.2s; }
-        select:focus, input:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
     </style>
 </head>
 <body>
@@ -36,102 +39,139 @@
             </div>
             <div class="flex flex-col">
                 <span class="text-xl font-bold text-white leading-none">Gueslectors</span>
-                <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-400 mt-1">Advanced Analytics</span>
+                <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-400 mt-1">Internal Data System</span>
             </div>
         </div>
-        <div id="user-status" class="text-sm text-slate-400 bg-slate-800/50 px-3 py-1 rounded-full border border-slate-700">Novikontas Network</div>
+        <div class="text-sm text-slate-400 bg-slate-800/50 px-3 py-1 rounded-full border border-slate-700">Novikontas Network</div>
     </header>
 
     <main>
         <div id="login-section" class="flex flex-col items-center justify-center h-[75vh] px-4">
-            <h1 class="text-3xl font-bold mb-3 text-white">Access Protected</h1>
-            <p class="text-slate-400 mb-8">Please authorize with your corporate Novikontas profile.</p>
+            <h1 class="text-3xl font-bold mb-8 text-white text-center">Please authorize to access analytics</h1>
             <button id="login-btn" onclick="handleAuthClick()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-12 rounded-xl transition-all shadow-xl shadow-indigo-500/25 active:scale-95 flex items-center gap-3">
                 <img src="https://www.google.com/favicon.ico" width="20" alt="G"> Log in with Google
             </button>
         </div>
 
-        <div id="dashboard" class="fade-in">
+        <div id="dashboard-container" class="fade-in">
             
-            <div class="card md:col-span-2 flex flex-wrap gap-6 items-end bg-[#1e293b] border-slate-700">
-                <div class="flex-1 min-w-[200px]">
-                    <label class="block text-[10px] uppercase tracking-wider text-slate-500 mb-2 font-bold">Search Category</label>
-                    <input type="text" id="search-category" oninput="applyFilters()" placeholder="Напр: NAV COLLEGE" 
-                           class="w-full bg-slate-800 border border-slate-600 text-sm rounded-lg p-2.5 outline-none text-white focus:border-indigo-500">
-                </div>
-                <div class="w-48">
-                    <label class="block text-[10px] uppercase tracking-wider text-slate-500 mb-2 font-bold">Time Period</label>
-                    <select id="filter-period" onchange="applyFilters()" class="w-full bg-slate-800 border border-slate-600 text-sm rounded-lg p-2.5 outline-none text-white focus:border-indigo-500 cursor-pointer">
-                        <option value="all">All Available Data</option>
-                        <option value="2025">Year 2025</option>
-                        <option value="2026">Year 2026</option>
-                        <option value="last12">Previous 12 Months</option>
-                    </select>
-                </div>
-                <div class="text-right pb-3">
-                    <span id="data-range-info" class="text-xs text-indigo-400 font-mono font-bold"></span>
-                </div>
+            <div class="flex gap-4 border-b border-slate-700 mb-8 px-4">
+                <button id="tab-std-btn" class="tab-btn active" onclick="switchTab('standard')">Standard Statistics</button>
+                <button id="tab-det-btn" class="tab-btn" onclick="switchTab('detailed')">Detailed Statistics</button>
             </div>
 
-            <div class="card md:col-span-2">
-                <h2 class="text-xl mb-6 text-indigo-400 font-bold flex items-center gap-2">
-                    <span class="w-3 h-3 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span>
-                    Comparative Monthly Analysis
-                </h2>
-                <div class="chart-container">
-                    <canvas id="chartMain"></canvas>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <div class="card md:col-span-2 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold text-white">Expenses</h2>
+                        <span id="data-range-info" class="text-xs text-indigo-400 font-mono font-bold"></span>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-6 items-end">
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="block text-[10px] uppercase tracking-wider text-slate-500 mb-2 font-bold">Search Category</label>
+                            <input type="text" id="search-category" oninput="applyFilters()" placeholder="Напр: NAV COLLEGE" 
+                                   class="w-full bg-slate-800 border border-slate-600 text-sm rounded-lg p-2.5 outline-none text-white focus:border-indigo-500">
+                        </div>
+                        <div class="w-48">
+                            <label class="block text-[10px] uppercase tracking-wider text-slate-500 mb-2 font-bold">Time Period</label>
+                            <select id="filter-period" onchange="applyFilters()" class="w-full bg-slate-800 border border-slate-600 text-sm rounded-lg p-2.5 outline-none text-white focus:border-indigo-500">
+                                <option value="all">All Available Data</option>
+                                <option value="2025">Year 2025</option>
+                                <option value="2026">Year 2026</option>
+                                <option value="last12">Previous 12 Months</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="card">
-                <h2 class="text-xl mb-6 text-indigo-400 font-bold">Total Trendline</h2>
-                <div class="chart-container">
-                    <canvas id="chartTrend"></canvas>
+                <div class="card md:col-span-2">
+                    <h2 class="text-xl mb-6 text-indigo-400 font-bold flex items-center gap-2">
+                        <span class="w-3 h-3 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span>
+                        Comparative Monthly Analysis
+                    </h2>
+                    <div class="chart-container">
+                        <canvas id="chartMain"></canvas>
+                    </div>
                 </div>
-            </div>
 
-            <div class="card">
-                <h2 class="text-xl mb-6 text-indigo-400 font-bold">Data Summary</h2>
-                <div id="table-container" class="table-wrapper"></div>
-            </div>
+                <div class="card">
+                    <h2 class="text-xl mb-6 text-indigo-400 font-bold">Total Trendline</h2>
+                    <div class="chart-container">
+                        <canvas id="chartTrend"></canvas>
+                    </div>
+                </div>
 
+                <div class="card">
+                    <h2 class="text-xl mb-6 text-indigo-400 font-bold">Data Summary</h2>
+                    <div id="table-container" class="table-wrapper"></div>
+                </div>
+
+            </div>
         </div>
     </main>
 
     <script>
         const CLIENT_ID = '962018048971-1362jqjncldrmln6rm01g88v1jj45go9.apps.googleusercontent.com';
         const SPREADSHEET_ID = '15PfvhPDdF_NXsYFaeIBag7BS1N_zE1JyKFfzkgt9FbE';
-        const RANGE = 'Лист1!A1:N18'; 
-
-        let tokenClient, accessToken = null, rawData = [];
+        
+        let tokenClient, accessToken = null;
+        let activeTab = 'standard'; // 'standard' or 'detailed'
+        let rawData = { standard: [], detailed: [] };
+        let mainChart, trendChart;
 
         function initClient() {
             tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: CLIENT_ID,
                 scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
-                callback: async (resp) => { if (resp.access_token) { accessToken = resp.access_token; await loadData(); } },
+                callback: async (resp) => { if (resp.access_token) { accessToken = resp.access_token; await loadAllData(); } },
             });
         }
 
         function handleAuthClick() { tokenClient ? tokenClient.requestAccessToken() : alert("Loading..."); }
 
-        async function loadData() {
+        async function loadAllData() {
             document.getElementById('login-section').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'grid';
+            document.getElementById('dashboard-container').style.display = 'block';
+            
             try {
-                const resp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}`, {
-                    headers: { 'Authorization': `Bearer ${accessToken}` }
-                });
-                const data = await resp.json();
-                if (data.values) { rawData = data.values; applyFilters(); }
+                // Загружаем сразу оба листа
+                const [resp1, resp2] = await Promise.all([
+                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Лист2!A1:N8`, { headers: { 'Authorization': `Bearer ${accessToken}` } }),
+                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Лист1!A1:N18`, { headers: { 'Authorization': `Bearer ${accessToken}` } })
+                ]);
+                
+                const data1 = await resp1.json();
+                const data2 = await resp2.json();
+                
+                rawData.standard = data1.values || [];
+                rawData.detailed = data2.values || [];
+                
+                switchTab('standard');
             } catch (err) { console.error(err); }
         }
 
+        function switchTab(tab) {
+            activeTab = tab;
+            document.getElementById('tab-std-btn').className = `tab-btn ${tab === 'standard' ? 'active' : ''}`;
+            document.getElementById('tab-det-btn').className = `tab-btn ${tab === 'detailed' ? 'active' : ''}`;
+            
+            // Сбрасываем фильтры при переключении
+            document.getElementById('search-category').value = '';
+            document.getElementById('filter-period').value = 'all';
+            
+            applyFilters();
+        }
+
         function applyFilters() {
+            const data = rawData[activeTab];
+            if (!data || data.length === 0) return;
+
             const filterVal = document.getElementById('filter-period').value;
             const searchVal = document.getElementById('search-category').value.toLowerCase();
-            const headers = rawData[0];
-            const content = rawData.slice(1);
+            const headers = data[0];
+            const content = data.slice(1);
             
             let selectedIdx = [];
             headers.forEach((h, i) => {
@@ -149,22 +189,24 @@
 
             const filteredData = [[headers[0], ...selectedIdx.map(i => headers[i])], ...filteredRows];
             
-            document.getElementById('data-range-info').innerText = `Displaying ${selectedIdx.length} months`;
-            updateCharts(filteredData);
+            document.getElementById('data-range-info').innerText = `Sheet: ${activeTab === 'standard' ? 'Лист2' : 'Лист1'} | Cols: ${selectedIdx.length}`;
+            updateVisuals(filteredData);
         }
 
-        let mainChart, trendChart;
-
-        function updateCharts(data) {
+        function updateVisuals(data) {
             if (mainChart) mainChart.destroy();
             if (trendChart) trendChart.destroy();
 
             const months = data[0].slice(1);
             const cats = data.slice(1).filter(r => r[0] !== 'TOTAL').map(r => r[0]);
 
+            // Main Bar Chart
             const barDatasets = months.map((m, i) => ({
                 label: m,
-                data: data.slice(1).filter(r => r[0] !== 'TOTAL').map(r => parseFloat(r[i+1].toString().replace(',','.')) || 0),
+                data: data.slice(1).filter(r => r[0] !== 'TOTAL').map(r => {
+                    let val = r[i+1] ? r[i+1].toString().replace(',', '.') : "0";
+                    return parseFloat(val) || 0;
+                }),
                 backgroundColor: `hsl(${220 + (i * 20)}, 65%, 50%)`,
                 borderRadius: 4
             }));
@@ -172,17 +214,40 @@
             mainChart = new Chart(document.getElementById('chartMain'), {
                 type: 'bar',
                 data: { labels: cats, datasets: barDatasets },
-                options: { responsive: true, maintainAspectRatio: false, 
-                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } },
-                    scales: { y: { grid: { color: '#334155' }, ticks: { color: '#64748b' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } } },
+                    scales: { 
+                        y: { grid: { color: '#334155' }, ticks: { color: '#64748b' } }, 
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } } 
+                    }
                 }
             });
 
+            // Trend Line Chart
             const totalRow = data.find(r => r[0] === 'TOTAL') || data[data.length - 1];
             trendChart = new Chart(document.getElementById('chartTrend'), {
                 type: 'line',
-                data: { labels: months, datasets: [{ label: 'Trend', data: totalRow.slice(1).map(v => parseFloat(v.toString().replace(',','.')) || 0), borderColor: '#6366f1', fill: true, backgroundColor: 'rgba(99, 102, 241, 0.1)', tension: 0.4 }] },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: '#334155' } }, x: { ticks: { color: '#94a3b8' } } } }
+                data: { 
+                    labels: months, 
+                    datasets: [{ 
+                        label: 'Total Trend', 
+                        data: totalRow.slice(1).map(v => parseFloat(v.toString().replace(',','.')) || 0), 
+                        borderColor: '#6366f1', 
+                        fill: true, 
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)', 
+                        tension: 0.4 
+                    }] 
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { 
+                        y: { grid: { color: '#334155' }, ticks: { color: '#64748b' } }, 
+                        x: { ticks: { color: '#94a3b8' } } 
+                    } 
+                }
             });
 
             renderTable(data);
