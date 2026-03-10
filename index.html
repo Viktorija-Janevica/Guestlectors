@@ -2,31 +2,53 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Приватный график компании</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gueslectors | Internal Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 50px; }
-        #chart-wrapper { width: 80%; margin: 20px auto; display: none; }
-        .btn-login { background: #4285F4; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        .btn-login:hover { background: #357ae8; }
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; margin: 0; }
+        #chart-wrapper { width: 90%; max-width: 1000px; margin: 40px auto; display: none; background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; }
+        .login-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; }
     </style>
 </head>
 <body>
 
-    <h1>График данных (Только для сотрудников)</h1>
-    
-    <button id="login-btn" class="btn-login">Войти с помощью Google</button>
+    <header class="flex items-center justify-between px-8 py-4 bg-[#111827] border-b border-slate-700 shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="flex items-center justify-center w-10 h-10 bg-indigo-600 rounded-lg shadow-indigo-500/20 shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                </svg>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-xl font-bold tracking-tight text-white leading-none">Gueslectors</span>
+                <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-400 mt-1">Internal Use</span>
+            </div>
+        </div>
+        <div id="user-indicator" class="text-sm text-slate-400 font-medium">Система авторизации v1.0</div>
+    </header>
 
-    <div id="chart-wrapper">
-        <canvas id="myChart"></canvas>
-    </div>
+    <main>
+        <div id="login-section" class="login-container">
+            <h1 class="text-2xl font-semibold mb-6 text-slate-200">График данных (Только для сотрудников)</h1>
+            <button id="login-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-8 rounded-lg transition-all shadow-lg shadow-indigo-500/20">
+                Войти с помощью Google
+            </button>
+        </div>
+
+        <div id="chart-wrapper">
+            <h2 class="text-xl mb-4 text-indigo-400 font-bold">Аналитика показателей</h2>
+            <canvas id="myChart"></canvas>
+        </div>
+    </main>
 
     <script>
-        // --- НАСТРОЙКИ ---
+        // ТВОИ НАСТРОЙКИ (ОСТАВИЛ БЕЗ ИЗМЕНЕНИЙ)
         const CLIENT_ID = '962018048971-1362jqjncldrmln6rm01g88v1jj45go9.apps.googleusercontent.com';
         const SPREADSHEET_ID = '15PfvhPDdF_NXsYFaeIBag7BS1N_zE1JyKFfzkgt9FbE';
-        const RANGE = 'Лист1!A1:L17'; // Убедись, что название листа совпадает
-        // -----------------
+        const RANGE = 'Лист1!A1:L17';
 
         let tokenClient;
         let accessToken = null;
@@ -38,7 +60,7 @@
                 callback: (tokenResponse) => {
                     if (tokenResponse.access_token) {
                         accessToken = tokenResponse.access_token;
-                        document.getElementById('login-btn').style.display = 'none';
+                        document.getElementById('login-section').style.display = 'none';
                         document.getElementById('chart-wrapper').style.display = 'block';
                         fetchData();
                     }
@@ -74,15 +96,25 @@
                     datasets: [{
                         label: 'Показатели',
                         data: values,
-                        borderColor: '#4285F4',
-                        backgroundColor: 'rgba(66, 133, 244, 0.1)',
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        borderWidth: 3,
+                        tension: 0.3, // Сглаживание линий
                         fill: true
                     }]
+                },
+                options: {
+                    plugins: {
+                        legend: { labels: { color: '#cbd5e1' } }
+                    },
+                    scales: {
+                        y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
+                    }
                 }
             });
         }
     </script>
-<script src="https://accounts.google.com/gsi/client" onload="initClient()" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" onload="initClient()" async defer></script>
 </body>
-
 </html>
